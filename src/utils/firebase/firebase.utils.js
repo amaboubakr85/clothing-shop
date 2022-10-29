@@ -1,5 +1,11 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth'
 import { doc, getDoc, setDoc, getFirestore } from 'firebase/firestore'
 // TODO: Add SDKs for Firebase products that you want to use
 
@@ -15,19 +21,21 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig)
 
-const provider = new GoogleAuthProvider()
-provider.setCustomParameters({
+const googleProvider = new GoogleAuthProvider()
+googleProvider.setCustomParameters({
   prompt: 'select_account',
 })
 
 //  ! Auth and sign-in
 
 export const auth = getAuth()
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider)
+export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider)
 
 //  ! Store users and DB
 const db = getFirestore()
-export const createUserDocumentFromAuth = async (userAuth) => {
+
+export const createUserDocumentFromAuth = async (userAuth, additionalInformation = {}) => {
+  if (!userAuth) return
   // ? user document reference with userID
   const userDocRef = doc(db, 'users', userAuth.uid)
   //   console.log(userDocRef)
@@ -44,7 +52,7 @@ export const createUserDocumentFromAuth = async (userAuth) => {
     const { displayName, email } = userAuth
     const createdAt = new Date()
     try {
-      await setDoc(userDocRef, { displayName, email, createdAt })
+      await setDoc(userDocRef, { displayName, email, createdAt, ...additionalInformation })
     } catch (error) {
       console.log('error creating user', error.message)
     }
@@ -52,4 +60,16 @@ export const createUserDocumentFromAuth = async (userAuth) => {
 
   //? if user exists
   return userDocRef
+}
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return
+
+  return await createUserWithEmailAndPassword(auth, email, password)
+}
+
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return
+
+  return await signInWithEmailAndPassword(auth, email, password)
 }
