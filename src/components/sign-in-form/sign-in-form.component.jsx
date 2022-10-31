@@ -1,7 +1,6 @@
 import './sign-in-form.styles.scss'
 import { useState } from 'react'
 import {
-  //createAuthUserWithEmailAndPassword,
   signInAuthUserWithEmailAndPassword,
   createUserDocumentFromAuth,
   signInWithGooglePopup,
@@ -18,6 +17,7 @@ const SignInForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields)
   const { email, password } = formFields
 
+  // ! functions
   const resetFormFields = () => {
     setFormFields(defaultFormFields)
   }
@@ -29,28 +29,20 @@ const SignInForm = () => {
   }
 
   const signInWithGoogle = async () => {
-    const response = await signInWithGooglePopup()
-    const { user } = response
-    await createUserDocumentFromAuth(user)
+    // const response = await signInWithGooglePopup()
+    // const { user } = response
+
+    // await createUserDocumentFromAuth(user)
+    await signInWithGooglePopup()
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
-      const response = await signInAuthUserWithEmailAndPassword(email, password)
-      console.log(
-        '🚀 ~ file: sign-in-form.component.jsx ~ line 42 ~ handleSubmit ~ response',
-        response
-      )
+      await signInAuthUserWithEmailAndPassword(email, password)
       resetFormFields()
     } catch (error) {
-      // if (error.code === 'auth/wrong-password') {
-      //   alert('wrong password ')
-      // }
-      // if (error.code === 'auth/user-not-found') {
-      //   alert('there is no user with specified email address ')
-      // }
       switch (error.code) {
         case 'auth/wrong-password':
           alert('wrong password')
