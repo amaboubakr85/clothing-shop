@@ -6,7 +6,7 @@ import { UserContext } from '../../contexts/user.context'
 import { signOutUser } from '../../utils/firebase/firebase.utils'
 import CartIcon from '../../components/cart-icon/cart-icon.component'
 import CartDropdown from '../../cart-dropdown/cart-dropdown.component'
-import { CartItemsContext } from '../../contexts/cart-items.context'
+import { CartContext } from '../../contexts/cart.context'
 const Navigation = () => {
   const { currentUser } = useContext(UserContext)
 
@@ -16,7 +16,7 @@ const Navigation = () => {
     await signOutUser()
   }
 
-  const { showCartItems } = useContext(CartItemsContext)
+  const { showCartItems } = useContext(CartContext)
 
   return (
     <Fragment>
